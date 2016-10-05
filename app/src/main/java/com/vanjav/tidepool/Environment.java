@@ -5,51 +5,72 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.Choreographer;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 
 /**
  * Created by vveselin on 04/10/2016.
  */
 
-public class Environment extends View {
+public class Environment extends SurfaceView implements Choreographer.FrameCallback {
     private Paint paint;
     private int r = 200;
-    private int fps = 60;
-    private int drainTime = 500; //0.5 seconds
+    private boolean drain = false;
+    private int drainTime = 500;
+
+    private Canvas canvas;
+    private SurfaceHolder surfaceHolder;
 
     public Environment (Context context) {
-        super(context);
-        setup();
+        this(context, null);
     }
 
     public Environment (Context context, AttributeSet attrs) {
         super(context, attrs);
-        setup();
-    }
 
-    public Environment (Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        setup();
-    }
-
-    private void setup() {
+        surfaceHolder = getHolder();
         paint = new Paint();
         paint.setColor(Color.CYAN);
+
+        Choreographer.getInstance().postFrameCallback(this);
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+    public void doFrame(long frameTimeNanos) {
+        Choreographer.getInstance().postFrameCallback(this);
+        update();
+    }
+    private void update() {
+        if (drain) {
+            r -= drainTime/17;
+            if (r < 0) {
+                drain = false;
+                r = 200;
+            }
+        }
 
-        canvas.drawColor(Color.YELLOW);
-        canvas.drawCircle(getWidth()/2, getHeight()/2, r, paint);
+        try {
+            canvas = surfaceHolder.lockCanvas(null);
+            if(canvas != null){
+                synchronized (surfaceHolder) {
+                    canvas.drawColor(Color.YELLOW);
+                    canvas.drawCircle(getWidth()/2, getHeight()/2, r, paint);
+                }
+            }
+        }
+        finally {
+            if (canvas != null) {
+                surfaceHolder.unlockCanvasAndPost(canvas);
+            }
+        }
     }
 
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getX() > getWidth()/2 - r && event.getX() < getWidth()/2 + r && event.getY() > getHeight()/2 - r && event.getY() < getHeight()/2 + r) {
-            r -= 1;
-            ((Environment) findViewById(R.id.environment)).invalidate();
+            drain = true;
         }
 
         return true;
