@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context="com.vanjav.tidepool.MainActivity">
 
-    <com.vanjav.tidepool.Environment
+    <com.vanjav.tidepool.TidepoolView
         android:id="@+id/environment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

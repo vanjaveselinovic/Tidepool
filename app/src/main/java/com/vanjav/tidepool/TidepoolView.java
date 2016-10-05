@@ -9,31 +9,37 @@ import android.view.Choreographer;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
+
+import java.util.ResourceBundle;
 
 /**
  * Created by vveselin on 04/10/2016.
  */
 
-public class Environment extends SurfaceView implements Choreographer.FrameCallback {
+public class TidepoolView extends SurfaceView implements Choreographer.FrameCallback {
+    long previousFrameNanos;
+
     private Paint paint;
-    private int r = 200;
-    private boolean drain = false;
-    private int drainTime = 500;
 
     private Canvas canvas;
     private SurfaceHolder surfaceHolder;
 
-    public Environment (Context context) {
+    private Controller controller;
+
+    public TidepoolView(Context context) {
         this(context, null);
     }
 
-    public Environment (Context context, AttributeSet attrs) {
+    public TidepoolView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        controller = new Controller();
 
         surfaceHolder = getHolder();
         paint = new Paint();
         paint.setColor(Color.CYAN);
+
+        previousFrameNanos = System.nanoTime();
 
         Choreographer.getInstance().postFrameCallback(this);
     }
@@ -41,23 +47,26 @@ public class Environment extends SurfaceView implements Choreographer.FrameCallb
     @Override
     public void doFrame(long frameTimeNanos) {
         Choreographer.getInstance().postFrameCallback(this);
-        update();
-    }
-    private void update() {
-        if (drain) {
-            r -= drainTime/17;
-            if (r < 0) {
-                drain = false;
-                r = 200;
-            }
-        }
 
+        update((frameTimeNanos - previousFrameNanos)/1000000);
+        draw();
+
+        previousFrameNanos = frameTimeNanos;
+    }
+
+    private void update(long deltaTimeNanos) {
+        controller.updatePools(deltaTimeNanos);
+    }
+
+    private void draw() {
         try {
             canvas = surfaceHolder.lockCanvas(null);
             if(canvas != null){
                 synchronized (surfaceHolder) {
                     canvas.drawColor(Color.YELLOW);
-                    canvas.drawCircle(getWidth()/2, getHeight()/2, r, paint);
+                    for (Pool pool : controller.getPools()) {
+                        canvas.drawCircle(pool.getX(), pool.getY(), pool.getR(), paint);
+                    }
                 }
             }
         }
@@ -69,10 +78,7 @@ public class Environment extends SurfaceView implements Choreographer.FrameCallb
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getX() > getWidth()/2 - r && event.getX() < getWidth()/2 + r && event.getY() > getHeight()/2 - r && event.getY() < getHeight()/2 + r) {
-            drain = true;
-        }
-
+        controller.touch((int) event.getX(), (int) event.getY());
         return true;
     }
 }
