@@ -16,13 +16,20 @@ public class Controller {
     }
 
     public void touch(int x, int y) {
+        boolean touchedPool = false;
+
         for (Pool pool : pools) {
-            if (!pool.isDraining() && x > pool.getX() - pool.getR() && x < pool.getX() + pool.getR() && y > pool.getY() - pool.getR() && y < pool.getY() + pool.getR()) {
-                pool.drain(true);
+            if (x > pool.getX() - pool.getR() && x < pool.getX() + pool.getR() && y > pool.getY() - pool.getR() && y < pool.getY() + pool.getR()) {
+                if (!pool.isDraining())
+                    pool.drain(true);
+                
+                touchedPool = true;
             }
         }
 
-        addPool(new Pool(x+200, y+200, 200));
+        if (!touchedPool) {
+            addPool(new Pool(x, y, 200));
+        }
     }
 
     public void updatePools(float deltaTimeNanos) {
