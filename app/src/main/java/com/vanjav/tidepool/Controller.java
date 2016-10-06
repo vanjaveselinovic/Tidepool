@@ -33,16 +33,26 @@ public class Controller {
         for (Item item : items) {
             if (x > item.getX() - item.getR() && x < item.getX() + item.getR() && y > item.getY() - item.getR() && y < item.getY() + item.getR()) {
                 items.remove(item);
+                pools.get(0).drain(1);
+                pools.get(2).drain(-1);
             }
         }
     }
 
     public void updatePools(float deltaTimeNanos) {
         for (Pool pool : pools) {
-            if (pool.isDraining()) {
+            if (pool.isDraining() == 1) {
+                pool.setR((int) (pool.getR() + pool.getRInit()*(deltaTimeNanos/drainTime)));
+                if (pool.getR() >= pool.getRInit()) {
+                    pool.setR(pool.getRInit());
+                    pool.drain(0);
+                }
+            }
+            else if (pool.isDraining() == -1) {
                 pool.setR((int) (pool.getR() - pool.getRInit()*(deltaTimeNanos/drainTime)));
-                if (pool.getR() < 0) {
-                    pool.drain(false);
+                if (pool.getR() <= 0) {
+                    pool.setR(0);
+                    pool.drain(0);
                 }
             }
         }

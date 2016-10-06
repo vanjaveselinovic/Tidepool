@@ -6,14 +6,14 @@ package com.vanjav.tidepool;
 
 public class Pool {
     private int x, y, r, rInit;
-    private boolean draining;
+    private int draining;
 
     public Pool(int x, int y, int r, int rInit) {
         this.x = x;
         this.y = y;
         this.r = r;
         this.rInit = rInit;
-        draining = false;
+        draining = 0;
     }
 
     public int getX() {
@@ -32,7 +32,7 @@ public class Pool {
         return rInit;
     }
 
-    public boolean isDraining() {
+    public int isDraining() {
         return draining;
     }
 
@@ -40,7 +40,7 @@ public class Pool {
         this.r = r;
     }
 
-    public void drain(boolean draining) {
+    public void drain(int draining) {
         this.draining = draining;
     }
 }

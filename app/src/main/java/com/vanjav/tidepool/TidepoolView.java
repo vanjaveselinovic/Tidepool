@@ -49,10 +49,10 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
         height = displayMetrics.heightPixels;
 
         controller = new Controller();
-        controller.addPool(new Pool(width/2, 600, 0, 200));
+        controller.addPool(new Pool(width/2, 650, 0, 200));
         controller.addPool(new Pool(width/2, 300, 200, 200));
-        controller.addPool(new Pool(width/2, 900, 200, 200));
-        controller.addItem(new Item(width/2, 750));
+        controller.addPool(new Pool(width/2, 1000, 200, 200));
+        controller.addItem(new Item(width/2, 825));
 
         surfaceHolder = getHolder();
 
@@ -83,6 +83,8 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
                     canvas.drawRect(0, 0, width, height, paintSand);
                     for (Pool pool : controller.getPools()) {
                         canvas.drawCircle(pool.getX(), pool.getY(), pool.getRInit(), paintSandDark);
+                    }
+                    for (Pool pool : controller.getPools()) {
                         canvas.drawCircle(pool.getX(), pool.getY(), pool.getR(), paintWater);
                     }
                     canvas.drawRect(0, 0, width, 200, paintWater);
