@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.Choreographer;
 import android.view.MotionEvent;
@@ -37,7 +38,7 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
 
         surfaceHolder = getHolder();
         paint = new Paint();
-        paint.setColor(Color.CYAN);
+        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorWater));
 
         previousFrameNanos = System.nanoTime();
 
@@ -63,7 +64,8 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
             canvas = surfaceHolder.lockCanvas(null);
             if(canvas != null){
                 synchronized (surfaceHolder) {
-                    canvas.drawColor(Color.YELLOW);
+                    canvas.drawColor(ContextCompat.getColor(getContext(), R.color.colorSand));
+                    canvas.drawRect(0,0,getWidth(),200,paint);
                     for (Pool pool : controller.getPools()) {
                         canvas.drawCircle(pool.getX(), pool.getY(), pool.getR(), paint);
                     }
