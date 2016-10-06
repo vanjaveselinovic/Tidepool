@@ -25,7 +25,7 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
     private SurfaceHolder surfaceHolder;
     private int width, height;
     private Controller controller;
-    private Paint paintSand, paintSandDark, paintWater;
+    private Paint paintSand, paintSandDark, paintWater, paintItem;
 
     public TidepoolView(Context context) {
         this(context, null);
@@ -40,6 +40,8 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
         paintSand.setColor(ContextCompat.getColor(getContext(), R.color.colorSand));
         paintSandDark = new Paint();
         paintSandDark.setColor(ContextCompat.getColor(getContext(), R.color.colorSandDark));
+        paintItem = new Paint();
+        paintItem.setColor(ContextCompat.getColor(getContext(), R.color.colorItem));
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -50,6 +52,7 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
         controller.addPool(new Pool(width/2, 600, 0, 200));
         controller.addPool(new Pool(width/2, 300, 200, 200));
         controller.addPool(new Pool(width/2, 900, 200, 200));
+        controller.addItem(new Item(width/2, 750));
 
         surfaceHolder = getHolder();
 
@@ -83,6 +86,9 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
                         canvas.drawCircle(pool.getX(), pool.getY(), pool.getR(), paintWater);
                     }
                     canvas.drawRect(0, 0, width, 200, paintWater);
+                    for (Item item : controller.getItems()) {
+                        canvas.drawCircle(item.getX(), item.getY(), item.getR(), paintItem);
+                    }
                 }
             }
         }

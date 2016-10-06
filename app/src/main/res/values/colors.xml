@@ -3,4 +3,5 @@
     <color name="colorSand">#cab07a</color>
     <color name="colorSandDark">#b19968</color>
     <color name="colorWater">#69d2ff</color>
+    <color name="colorItem">#ff8f87</color>
 </resources>
