@@ -22,13 +22,8 @@ public class Controller {
             if (x > pool.getX() - pool.getR() && x < pool.getX() + pool.getR() && y > pool.getY() - pool.getR() && y < pool.getY() + pool.getR()) {
                 if (!pool.isDraining())
                     pool.drain(true);
-                
                 touchedPool = true;
             }
-        }
-
-        if (!touchedPool) {
-            addPool(new Pool(x, y, 200));
         }
     }
 

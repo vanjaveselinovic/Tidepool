@@ -8,11 +8,11 @@ public class Pool {
     private int x, y, r, rInit;
     private boolean draining;
 
-    public Pool(int x, int y, int r) {
+    public Pool(int x, int y, int r, int rInit) {
         this.x = x;
         this.y = y;
         this.r = r;
-        this.rInit = r;
+        this.rInit = rInit;
         draining = false;
     }
 

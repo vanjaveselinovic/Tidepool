@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorSand">#cab07a</color>
+    <color name="colorSandDark">#b19968</color>
     <color name="colorWater">#69d2ff</color>
 </resources>

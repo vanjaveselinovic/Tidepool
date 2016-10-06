@@ -1,11 +1,13 @@
 package com.vanjav.tidepool;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.Choreographer;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -18,14 +20,12 @@ import java.util.ResourceBundle;
  */
 
 public class TidepoolView extends SurfaceView implements Choreographer.FrameCallback {
-    long previousFrameNanos;
-
-    private Paint paint;
-
+    private long previousFrameNanos;
     private Canvas canvas;
     private SurfaceHolder surfaceHolder;
-
+    private int width, height;
     private Controller controller;
+    private Paint paintSand, paintSandDark, paintWater;
 
     public TidepoolView(Context context) {
         this(context, null);
@@ -34,11 +34,24 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
     public TidepoolView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
+        paintWater = new Paint();
+        paintWater.setColor(ContextCompat.getColor(getContext(), R.color.colorWater));
+        paintSand = new Paint();
+        paintSand.setColor(ContextCompat.getColor(getContext(), R.color.colorSand));
+        paintSandDark = new Paint();
+        paintSandDark.setColor(ContextCompat.getColor(getContext(), R.color.colorSandDark));
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        width = displayMetrics.widthPixels;
+        height = displayMetrics.heightPixels;
+
         controller = new Controller();
+        controller.addPool(new Pool(width/2, 600, 0, 200));
+        controller.addPool(new Pool(width/2, 300, 200, 200));
+        controller.addPool(new Pool(width/2, 900, 200, 200));
 
         surfaceHolder = getHolder();
-        paint = new Paint();
-        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorWater));
 
         previousFrameNanos = System.nanoTime();
 
@@ -64,11 +77,12 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
             canvas = surfaceHolder.lockCanvas(null);
             if(canvas != null){
                 synchronized (surfaceHolder) {
-                    canvas.drawColor(ContextCompat.getColor(getContext(), R.color.colorSand));
-                    canvas.drawRect(0,0,getWidth(),200,paint);
+                    canvas.drawRect(0, 0, width, height, paintSand);
                     for (Pool pool : controller.getPools()) {
-                        canvas.drawCircle(pool.getX(), pool.getY(), pool.getR(), paint);
+                        canvas.drawCircle(pool.getX(), pool.getY(), pool.getRInit(), paintSandDark);
+                        canvas.drawCircle(pool.getX(), pool.getY(), pool.getR(), paintWater);
                     }
+                    canvas.drawRect(0, 0, width, 200, paintWater);
                 }
             }
         }
