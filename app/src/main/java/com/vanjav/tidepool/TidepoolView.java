@@ -5,6 +5,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
+import android.graphics.Region;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -26,6 +29,7 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
     private int width, height;
     private Controller controller;
     private Paint paintSand, paintSandDark, paintWater, paintItem, paintFish;
+    Path path;
 
     public TidepoolView(Context context) {
         this(context, null);
@@ -44,6 +48,8 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
         paintItem.setColor(ContextCompat.getColor(getContext(), R.color.colorItem));
         paintFish = new Paint();
         paintFish.setColor(ContextCompat.getColor(getContext(), R.color.colorFish));
+
+        path = new Path();
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -89,6 +95,13 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
                     }
                     for (Pool pool : controller.getPools()) {
                         canvas.drawCircle(pool.getX(), pool.getY(), pool.getR(), paintWater);
+                        if (pool.isDraining() == 1) {
+                            path.reset();
+                            path.addCircle(pool.getX(), pool.getY(), pool.getRInit(), Path.Direction.CW);
+                            canvas.clipPath(path);
+                            canvas.drawCircle(pool.getFillX(), pool.getFillY(), pool.getRInit(), paintWater);
+                            canvas.clipRect(new Rect(0, 0, width, height), Region.Op.UNION);
+                        }
                     }
                     canvas.drawRect(0, 0, width, 200, paintWater);
                     for (Item item : controller.getItems()) {

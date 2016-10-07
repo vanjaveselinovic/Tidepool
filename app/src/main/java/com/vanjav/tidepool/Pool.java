@@ -5,8 +5,9 @@ package com.vanjav.tidepool;
  */
 
 public class Pool {
-    private int x, y, r, rInit;
+    private int x, y, r, rInit, fillX, fillY;
     private int draining;
+    private Pool fillSource;
 
     public Pool(int x, int y, int r, int rInit) {
         this.x = x;
@@ -32,12 +33,38 @@ public class Pool {
         return rInit;
     }
 
+    public int getFillX() {
+        return fillX;
+    }
+
+    public int getFillY() {
+        return fillY;
+    }
+
+    public Pool getFillSource() {
+        return fillSource;
+    }
+
     public int isDraining() {
         return draining;
     }
 
     public void setR(int r) {
         this.r = r;
+    }
+
+    public void setFillX(int fillX) {
+        this.fillX = fillX;
+    }
+
+    public void setFillY(int fillY) {
+        this.fillY = fillY;
+    }
+
+    public void setFillSource(Pool pool) {
+        fillSource = pool;
+        fillX = fillSource.getX();
+        fillY = fillSource.getY();
     }
 
     public void drain(int draining) {

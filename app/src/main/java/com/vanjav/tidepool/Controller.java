@@ -40,6 +40,7 @@ public class Controller {
         for (Item item : items) {
             if (x > item.getX() - item.getR() && x < item.getX() + item.getR() && y > item.getY() - item.getR() && y < item.getY() + item.getR()) {
                 items.remove(item);
+                pools.get(1).setFillSource(pools.get(2));
                 pools.get(1).drain(1);
                 pools.get(2).drain(-1);
                 fish.setDestPool(pools.get(1));
@@ -51,8 +52,15 @@ public class Controller {
     public void update(float deltaTimeNanos) {
         for (Pool pool : pools) {
             if (pool.isDraining() == 1) {
-                pool.setR((int) (pool.getR() + pool.getRInit()*(deltaTimeNanos/drainTime)));
+                /*pool.setR((int) (pool.getR() + pool.getRInit()*(deltaTimeNanos/drainTime)));
                 if (pool.getR() >= pool.getRInit()) {
+                    pool.setR(pool.getRInit());
+                    pool.drain(0);
+                }*/
+                pool.setFillX((int) (pool.getFillX() + (pool.getX() - pool.getFillSource().getX())*(deltaTimeNanos/drainTime)));
+                pool.setFillY((int) (pool.getFillY() + (pool.getY() - pool.getFillSource().getY())*(deltaTimeNanos/drainTime)));
+                if (Math.abs(pool.getFillX() - pool.getFillSource().getX()) >= Math.abs(pool.getX() - pool.getFillSource().getX())
+                        && Math.abs(pool.getFillY() - pool.getFillSource().getY()) >= Math.abs(pool.getY() - pool.getFillSource().getY())) {
                     pool.setR(pool.getRInit());
                     pool.drain(0);
                 }
