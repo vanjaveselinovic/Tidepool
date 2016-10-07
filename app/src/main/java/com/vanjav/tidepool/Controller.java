@@ -9,12 +9,19 @@ import java.util.ArrayList;
 public class Controller {
     private ArrayList<Pool> pools;
     private ArrayList<Item> items;
-    private int drainTime;
+    private Fish fish;
+
+    private int drainTime, swimTime;
 
     public Controller () {
         pools = new ArrayList<Pool>();
         items = new ArrayList<Item>();
-        drainTime = 500;
+        drainTime = 2000;
+        swimTime = 2000;
+    }
+
+    public void addFish (Fish fish) {
+        this.fish = fish;
     }
 
     public void touch(int x, int y) {
@@ -33,13 +40,15 @@ public class Controller {
         for (Item item : items) {
             if (x > item.getX() - item.getR() && x < item.getX() + item.getR() && y > item.getY() - item.getR() && y < item.getY() + item.getR()) {
                 items.remove(item);
-                pools.get(0).drain(1);
+                pools.get(1).drain(1);
                 pools.get(2).drain(-1);
+                fish.setDestPool(pools.get(1));
+                fish.swim(true);
             }
         }
     }
 
-    public void updatePools(float deltaTimeNanos) {
+    public void update(float deltaTimeNanos) {
         for (Pool pool : pools) {
             if (pool.isDraining() == 1) {
                 pool.setR((int) (pool.getR() + pool.getRInit()*(deltaTimeNanos/drainTime)));
@@ -56,6 +65,17 @@ public class Controller {
                 }
             }
         }
+        if (fish.isSwimming()) {
+            fish.setX((int) (fish.getX() + (fish.getDestPool().getX() - fish.getPool().getX())*(deltaTimeNanos / swimTime)));
+            fish.setY((int) (fish.getY() + (fish.getDestPool().getY() - fish.getPool().getY())*(deltaTimeNanos / swimTime)));
+            if (Math.abs(fish.getX() - fish.getPool().getX()) >= Math.abs(fish.getDestPool().getX() - fish.getPool().getX())
+                    && Math.abs(fish.getY() - fish.getPool().getY()) >= Math.abs(fish.getDestPool().getY() - fish.getPool().getY())) {
+                fish.setX(fish.getDestPool().getX());
+                fish.setY(fish.getDestPool().getY());
+                fish.setDestPool(fish.getDestPool());
+                fish.swim(false);
+            }
+        }
     }
 
     public ArrayList<Pool> getPools () {
@@ -64,6 +84,10 @@ public class Controller {
 
     public ArrayList<Item> getItems () {
         return items;
+    }
+
+    public Fish getFish () {
+        return fish;
     }
 
     public void addPool (Pool pool) {

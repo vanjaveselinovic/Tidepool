@@ -25,7 +25,7 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
     private SurfaceHolder surfaceHolder;
     private int width, height;
     private Controller controller;
-    private Paint paintSand, paintSandDark, paintWater, paintItem;
+    private Paint paintSand, paintSandDark, paintWater, paintItem, paintFish;
 
     public TidepoolView(Context context) {
         this(context, null);
@@ -42,6 +42,8 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
         paintSandDark.setColor(ContextCompat.getColor(getContext(), R.color.colorSandDark));
         paintItem = new Paint();
         paintItem.setColor(ContextCompat.getColor(getContext(), R.color.colorItem));
+        paintFish = new Paint();
+        paintFish.setColor(ContextCompat.getColor(getContext(), R.color.colorFish));
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -49,10 +51,11 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
         height = displayMetrics.heightPixels;
 
         controller = new Controller();
-        controller.addPool(new Pool(width/2, 650, 0, 200));
         controller.addPool(new Pool(width/2, 300, 200, 200));
+        controller.addPool(new Pool(width/2, 650, 0, 200));
         controller.addPool(new Pool(width/2, 1000, 200, 200));
         controller.addItem(new Item(width/2, 825));
+        controller.addFish(new Fish(controller.getPools().get(2)));
 
         surfaceHolder = getHolder();
 
@@ -72,7 +75,7 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
     }
 
     private void update(long deltaTimeNanos) {
-        controller.updatePools(deltaTimeNanos);
+        controller.update(deltaTimeNanos);
     }
 
     private void draw() {
@@ -91,6 +94,7 @@ public class TidepoolView extends SurfaceView implements Choreographer.FrameCall
                     for (Item item : controller.getItems()) {
                         canvas.drawCircle(item.getX(), item.getY(), item.getR(), paintItem);
                     }
+                    canvas.drawCircle(controller.getFish().getX(), controller.getFish().getY(), controller.getFish().getR(), paintFish);
                 }
             }
         }
